@@ -29,9 +29,11 @@ class MessagesController extends Controller
     public function index($user_id)
     {
         $user = Admin::find(auth()->id());
-        $conversations = Conversation::where('user_id', $user_id)->get();
-      
-        return view('admin-views.chat.index', ['conversations' => $conversations, 'user_id' => $user_id]);
+        $order_id = 67;
+
+        $conversations = Conversation::where('user_id', $user->id)->where('order_id', $order_id)->get();
+
+        return view('admin-views.chat.index', ['conversations' => $conversations, 'user_id' => $user_id,'order_id'=>$order_id]);
     }
 
     public function broadcast(Request $request)
@@ -40,12 +42,14 @@ class MessagesController extends Controller
             'message' => 'required|string|max:255',
         ]);
 
-        broadcast(new PusherBroadcast($request->get('message')))->toOthers(); 
+        // broadcast(new PusherBroadcast($request->get('message')))->toOthers(); 
+        broadcast(new MessageSent($request->get('user_id'),$request->get('message'),$request->get('order_id')))->toOthers(); 
       
         // Create a new message reference
         $conversation = new Conversation();
         $conversation->user_id = $request->user_id;
         $conversation->message = $request->message;
+        $conversation->order_id = $request->order_id;
         $conversation->save();
 
         return view('admin-views.chat.broadcast', ['message' => $request->get('message')]);
@@ -53,8 +57,9 @@ class MessagesController extends Controller
 
     public function receive(Request $request)
     {
-        $conversations = $this->database->getReference('messages')->getValue();
-        return view('admin-views.chat.receive', ['message' => $request->get('message'), 'conversations' => $conversations]);
+        // dd($request->all());
+        // $conversations = $this->database->getReference('messages')->getValue();
+        return view('admin-views.chat.receive', ['message' => $request->get('message')]);//, 'conversations' => $conversations
     }
 
 

@@ -16,6 +16,11 @@ class BroadcastServiceProvider extends ServiceProvider
     {
         Broadcast::routes();
 
+        // Broadcast::channel('conversations.{conversationId}', function ($user, $conversationId) {
+        //     // Add your authorization logic here
+        //     return true; // Or some condition to authorize the user
+        // });
+
         require base_path('routes/channels.php');
     }
 }

@@ -34,15 +34,22 @@ class MessageSent implements ShouldBroadcast
      *
      * @return array<int, \Illuminate\Broadcasting\Channel>
      */
-    public function broadcastOn(): array
+    public function broadcastOn()
     {
-        return [
-            new PrivateChannel('chat44' . $this->order_id),
-        ];
+        return [new Channel('private-conversations.'.$this->order_id)];
+        // return new PrivateChannel('private' . $this->order_id);
     }
 
     public function broadcastAs()
     {
-        return 'chatMessage';
+        return 'chat';
     }
+
+    // public function broadcastWith()
+    // {
+    //     return [
+    //         'user' => $this->sender_id,
+    //         'message' => $this->message,
+    //     ];
+    // }
 }

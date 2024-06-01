@@ -13,13 +13,15 @@
     <!-- Chat -->
 
     <div class="messages">
+		@include('admin-views.chat.receive', [
+            'message' => 'Ask a friend to open this link and you can chat with them!',
+        ])
+
         @foreach ($conversations as $conversation)
             @include('admin-views.chat.receive', ['message' => $conversation['message']])
         @endforeach
 
-        @include('admin-views.chat.receive', [
-            'message' => 'Ask a friend to open this link and you can chat with them!',
-        ])
+        
     </div>
     <!-- End Chat -->
 
@@ -40,29 +42,16 @@
 
 
 <script>
-    Pusher.logToConsole = true;
-
     const pusher = new Pusher('{{ config('broadcasting.connections.pusher.key') }}', {
-        cluster: 'eu',
-        authEndpoint: "{{url('/broadcasting/auth')}}", // This should match the endpoint defined by Broadcast::routes()
-        auth: {
-            headers: {
-                'X-CSRF-Token': '{{ csrf_token() }}'
-            }
-        }
+        cluster: 'eu'
     });
-
-    const channelName = 'private-conversations.{{$order_id}}'; // Adjust this as needed
-    const channel = pusher.subscribe(channelName);
-
-    // const channel = pusher.subscribe('public');
+    const channel = pusher.subscribe('public');
 
     //  const conversation_id = 27;
     // const channel = pusher.subscribe('conversations.27');
 
     //Receive messages
     channel.bind('chat', function(data) {
-        console.log(data);
         $.post("{{ route('admin.message.receive') }}", {
                 _token: '{{ csrf_token() }}',
                 message: data.message,
@@ -87,7 +76,7 @@
                 _token: '{{ csrf_token() }}',
                 message: $("form #message").val(),
                 user_id: $("form #user_id").val(),
-                order_id: '{{$order_id}}',
+				order_id: '{{ $order_id }}',
             }
         }).done(function(res) {
             $(".messages > .message").last().after(res);

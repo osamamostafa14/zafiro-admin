@@ -18,6 +18,7 @@ class PusherBroadcast implements ShouldBroadcast
     {
         $this->message = $message;
     }
+    
     public function broadcastOn(): array
     {
         return ['public'];

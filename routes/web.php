@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Route;
- 
+use Illuminate\Support\Facades\Broadcast;
 
 /*
 |--------------------------------------------------------------------------
@@ -119,3 +119,6 @@ Route::get('add-currency', function () {
 Route::get('/test',function (){
     return view('errors.404');
 });
+
+
+Broadcast::routes(['middleware' => ['auth:admin']]);
